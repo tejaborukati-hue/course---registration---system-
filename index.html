@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Student Registration Portal</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+  <h1>Student Course Portal</h1>
+  
+  <div id="auth-section">
+    <h2>Login / Register</h2>
+    <input type="text" id="name" placeholder="Name - only for register">
+    <input type="email" id="email" placeholder="Email" required>
+    <input type="password" id="password" placeholder="Password" required>
+    <button onclick="login()">Login</button>
+    <button onclick="register()">Register</button>
+    <p id="auth-msg"></p>
+  </div>
+
+  <div id="dashboard" class="hidden">
+    <button class="logout" onclick="logout()">Logout</button>
+    <h2>Available Courses</h2>
+    <div id="courses"></div>
+    <h2>My Courses</h2>
+    <div id="my-courses"></div>
+  </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>
