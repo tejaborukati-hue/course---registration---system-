@@ -1,3 +1,10 @@
+const SUPABASE_URL = "https://lprjchuwcdvtrhswlxyc.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_jvZ5ZxHElWrwaeLv6bEYwQ_ZqMiClTE";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
 async function register() {
   const { error } = await supabase
     .from('students')
