@@ -1,32 +1,78 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Student Registration Portal</title>
-<link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Course Portal</title>
+  <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-<div class="container">
-  <h1>Student Course Portal</h1>
-  
-  <div id="auth-section">
-    <h2>Login / Register</h2>
-    <input type="text" id="name" placeholder="Name - only for register">
-    <input type="email" id="email" placeholder="Email" required>
-    <input type="password" id="password" placeholder="Password" required>
-    <button onclick="login()">Login</button>
-    <button onclick="register()">Register</button>
-    <p id="auth-msg"></p>
+
+  <div class="container">
+    <h1>Student Course Portal</h1>
+
+    <!-- LOGIN SECTION -->
+    <div id="login-section" class="box">
+      <h2>Login</h2>
+      <input type="text" id="login-username" placeholder="Enter Username">
+      <input type="password" id="login-password" placeholder="Enter Password">
+      <button onclick="login()">Login</button>
+    </div>
+
+    <!-- REGISTER SECTION -->
+    <div id="register-section" class="box">
+      <h2>Register</h2>
+      <input type="text" id="reg-username" placeholder="Create Username">
+      <input type="password" id="reg-password" placeholder="Create Password">
+      <button onclick="register()">Register</button>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="box" style="display:none;">
+      <h2>Welcome Student 🎓</h2>
+      <p>You are successfully logged in.</p>
+      <button onclick="logout()">Logout</button>
+    </div>
+
   </div>
 
-  <div id="dashboard" class="hidden">
-    <button class="logout" onclick="logout()">Logout</button>
-    <h2>Available Courses</h2>
-    <div id="courses"></div>
-    <h2>My Courses</h2>
-    <div id="my-courses"></div>
-  </div>
-</div>
-<script src="script.js"></script>
+  <script>
+    function register() {
+      let user = document.getElementById("reg-username").value;
+      let pass = document.getElementById("reg-password").value;
+
+      if (user && pass) {
+        localStorage.setItem("user", user);
+        localStorage.setItem("pass", pass);
+        alert("Registered Successfully!");
+      } else {
+        alert("Please fill all fields");
+      }
+    }
+
+    function login() {
+      let user = document.getElementById("login-username").value;
+      let pass = document.getElementById("login-password").value;
+
+      let storedUser = localStorage.getItem("user");
+      let storedPass = localStorage.getItem("pass");
+
+      if (user === storedUser && pass === storedPass) {
+        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("login-section").style.display = "none";
+        document.getElementById("register-section").style.display = "none";
+      } else {
+        alert("Invalid Credentials");
+      }
+    }
+
+    function logout() {
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("login-section").style.display = "block";
+      document.getElementById("register-section").style.display = "block";
+    }
+  </script>
+
 </body>
 </html>
