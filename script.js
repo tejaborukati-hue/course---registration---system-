@@ -23,14 +23,14 @@ async function register() {
     .insert([
       {
         student_name: studentName,
-        mail: email,
+        email: email,
         phone: phone,
         course: course
       }
     ]);
 
   if (error) {
-    document.getElementById("auth-msg").textContent =
+    document.getElementById("auth-msg").textContent = 
       "Error: " + error.message;
   } else {
     document.getElementById("auth-msg").textContent =
