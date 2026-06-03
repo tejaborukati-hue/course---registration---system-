@@ -1,45 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Student Portal</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Course Registration System</title>
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
+  <div class="container">
+    
+    <!-- Registration Form -->
+    <div id="registerForm" class="card">
+      <h2>Register</h2>
+      <input type="text" id="regName" placeholder="Full Name" required>
+      <input type="email" id="regEmail" placeholder="Email" required>
+      <input type="password" id="regPassword" placeholder="Password" required>
+      <button id="registerBtn">Register</button>
+      <p>Already have an account? <a href="#" id="showLogin">Login</a></p>
+    </div>
 
-<div class="container">
+    <!-- Login Form -->
+    <div id="loginForm" class="card hidden">
+      <h2>Login</h2>
+      <input type="email" id="loginEmail" placeholder="Email" required>
+      <input type="password" id="loginPassword" placeholder="Password" required>
+      <button id="loginBtn">Login</button>
+      <p>Don’t have an account? <a href="#" id="showRegister">Register</a></p>
+    </div>
 
-  <!-- REGISTER -->
-  <div id="registerBox" class="box">
-    <h2>Register</h2>
-    <input type="text" id="regName" placeholder="Name">
-    <input type="email" id="regEmail" placeholder="Email">
-    <input type="password" id="regPass" placeholder="Password">
-    <button onclick="register()">Register</button>
-    <p onclick="showLogin()">Already have an account? Login</p>
+    <!-- Dashboard -->
+    <div id="dashboard" class="card hidden">
+      <h2>Welcome <span id="userName"></span> 🎉</h2>
+      <p id="userEmail"></p>
+
+      <h3>Available Courses</h3>
+      <div id="courseList"></div>
+
+      <h3>Your Enrolled Courses</h3>
+      <div id="enrolledCourses">None yet</div>
+
+      <button id="logoutBtn">Logout</button>
+    </div>
+
   </div>
-
-  <!-- LOGIN -->
-  <div id="loginBox" class="box hidden">
-    <h2>Login</h2>
-    <input type="email" id="loginEmail" placeholder="Email">
-    <input type="password" id="loginPass" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <p onclick="showRegister()">Create account</p>
-  </div>
-
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="box hidden">
-    <h2>Welcome 🎉</h2>
-    <p id="userInfo"></p>
-    <button onclick="logout()">Logout</button>
-  </div>
-
-</div>
-
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
         
