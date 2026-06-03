@@ -1,31 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Registration Portal</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Student Portal</title>
+  <link rel="stylesheet" href="style.css"/>
 </head>
+
 <body>
 
-    <div class="container">
-        <h1>Student Registration Portal</h1>
+<div class="container">
 
-        <input type="text" id="name" placeholder="Student Name" required>
+  <!-- REGISTER -->
+  <div id="registerBox" class="box">
+    <h2>Register</h2>
+    <input type="text" id="regName" placeholder="Name">
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPass" placeholder="Password">
+    <button onclick="register()">Register</button>
+    <p onclick="showLogin()">Already have an account? Login</p>
+  </div>
 
-        <input type="email" id="email" placeholder="Email Address" required>
+  <!-- LOGIN -->
+  <div id="loginBox" class="box hidden">
+    <h2>Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPass" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <p onclick="showRegister()">Create account</p>
+  </div>
 
-        <input type="tel" id="phone" placeholder="Phone Number" required>
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="box hidden">
+    <h2>Welcome 🎉</h2>
+    <p id="userInfo"></p>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-        <input type="text" id="course" placeholder="Course Name" required>
+</div>
 
-        <button onclick="register()">Register</button>
-
-        <p id="auth-msg"></p>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="script.js"></script>
-
+<script src="script.js"></script>
 </body>
 </html>
+        
