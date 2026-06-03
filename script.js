@@ -1,59 +1,127 @@
-function showLogin() {
-  document.getElementById("registerBox").classList.add("hidden");
-  document.getElementById("loginBox").classList.remove("hidden");
-}
+ // Sample courses
+const courses = [
+  {id: 1, name: "Web Development", instructor: "Prof. Smith"},
+  {id: 2, name: "Python Programming", instructor: "Prof. Lee"},
+  {id: 3, name: "Data Structures", instructor: "Prof. Kumar"},
+  {id: 4, name: "Machine Learning", instructor: "Prof. Patel"}
+];
 
-function showRegister() {
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("registerBox").classList.remove("hidden");
-}
+// DOM elements
+const registerForm = document.getElementById('registerForm');
+const loginForm = document.getElementById('loginForm');
+const dashboard = document.getElementById('dashboard');
 
-// REGISTER
-function register() {
-  let name = document.getElementById("regName").value;
-  let email = document.getElementById("regEmail").value;
-  let pass = document.getElementById("regPass").value;
+// Toggle forms
+document.getElementById('showLogin').onclick = () => {
+  registerForm.classList.add('hidden');
+  loginForm.classList.remove('hidden');
+};
 
-  if (!name || !email || !pass) {
-    alert("Fill all fields");
-    return;
+document.getElementById('showRegister').onclick = () => {
+  loginForm.classList.add('hidden');
+  registerForm.classList.remove('hidden');
+};
+
+// Register
+document.getElementById('registerBtn').onclick = () => {
+  const name = document.getElementById('regName').value;
+  const email = document.getElementById('regEmail').value;
+  const password = document.getElementById('regPassword').value;
+
+  if (!name || !email || !password) return alert('Fill all fields');
+
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  
+  if (users.find(u => u.email === email)) {
+    return alert('Email already registered');
   }
 
-  let user = { name, email, pass };
+  users.push({name, email, password, courses: []});
+  localStorage.setItem('users', JSON.stringify(users));
+  alert('Registration successful! Please login');
+  
+  registerForm.classList.add('hidden');
+  loginForm.classList.remove('hidden');
+};
 
-  localStorage.setItem(email, JSON.stringify(user));
+// Login
+document.getElementById('loginBtn').onclick = () => {
+  const email = document.getElementById('loginEmail').value;
+  const password = document.getElementById('loginPassword').value;
 
-  alert("Registration successful!");
-  showLogin();
+  let users = JSON.parse(localStorage.getItem('users')) || [];
+  const user = users.find(u => u.email === email && u.password === password);
+
+  if (!user) return alert('Invalid credentials');
+
+  localStorage.setItem('currentUser', JSON.stringify(user));
+  showDashboard(user);
+};
+
+// Show dashboard
+function showDashboard(user) {
+  loginForm.classList.add('hidden');
+  registerForm.classList.add('hidden');
+  dashboard.classList.remove('hidden');
+  
+  document.getElementById('userName').textContent = user.name;
+  document.getElementById('userEmail').textContent = `(${user.email})`;
+  
+  loadCourses();
 }
 
-// LOGIN
-function login() {
-  let email = document.getElementById("loginEmail").value;
-  let pass = document.getElementById("loginPass").value;
+// Load courses
+function loadCourses() {
+  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  const courseList = document.getElementById('courseList');
+  const enrolledDiv = document.getElementById('enrolledCourses');
 
-  let userData = localStorage.getItem(email);
+  courseList.innerHTML = courses.map(course => `
+    <div class="course-item">
+      <span><strong>${course.name}</strong> - ${course.instructor}</span>
+      <button onclick="enrollCourse(${course.id})">Register</button>
+    </div>
+  `).join('');
 
-  if (!userData) {
-    alert("User not found!");
-    return;
-  }
-
-  let user = JSON.parse(userData);
-
-  if (user.pass === pass) {
-    alert("Login successful!");
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("dashboard").classList.remove("hidden");
-    document.getElementById("userInfo").innerText =
-      "Welcome " + user.name + " (" + user.email + ")";
+  if (currentUser.courses && currentUser.courses.length > 0) {
+    enrolledDiv.innerHTML = currentUser.courses.map(c => `<div>${c.name}</div>`).join('');
   } else {
-    alert("Wrong password!");
+    enrolledDiv.innerHTML = 'None yet';
   }
 }
 
-// LOGOUT
-function logout() {
-  document.getElementById("dashboard").classList.add("hidden");
-  document.getElementById("loginBox").classList.remove("hidden");
+// Enroll in course
+function enrollCourse(courseId) {
+  let currentUser = JSON.parse(localStorage.getItem('currentUser'));
+  let users = JSON.parse(localStorage.getItem('users'));
+
+  const course = courses.find(c => c.id === courseId);
+  if (!currentUser.courses) currentUser.courses = [];
+
+  if (currentUser.courses.find(c => c.id === courseId)) {
+    return alert('Already registered for this course');
+  }
+
+  currentUser.courses.push(course);
+  const userIndex = users.findIndex(u => u.email === currentUser.email);
+  users[userIndex].courses = currentUser.courses;
+
+  localStorage.setItem('currentUser', JSON.stringify(currentUser));
+  localStorage.setItem('users', JSON.stringify(users));
+
+  loadCourses();
+  alert(`Registered for ${course.name}`);
 }
+
+// Logout
+document.getElementById('logoutBtn').onclick = () => {
+  localStorage.removeItem('currentUser');
+  dashboard.classList.add('hidden');
+  loginForm.classList.remove('hidden');
+};
+
+// Check if already logged in
+window.onload = () => {
+  const currentUser = localStorage.getItem('currentUser');
+  if (currentUser) showDashboard(JSON.parse(currentUser));
+};
