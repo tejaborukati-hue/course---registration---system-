@@ -1,44 +1,59 @@
-const SUPABASE_URL = "https://lprjchuwcdvtrhswlxyc.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_jvZ5ZxHElWrwaeLv6bEYwQ_ZqMiClTE";
+function showLogin() {
+  document.getElementById("registerBox").classList.add("hidden");
+  document.getElementById("loginBox").classList.remove("hidden");
+}
 
-const supabaseClient = supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+function showRegister() {
+  document.getElementById("loginBox").classList.add("hidden");
+  document.getElementById("registerBox").classList.remove("hidden");
+}
 
-async function register() {
-  const studentName = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const phone = document.getElementById("phone").value;
-  const course = document.getElementById("course").value;
+// REGISTER
+function register() {
+  let name = document.getElementById("regName").value;
+  let email = document.getElementById("regEmail").value;
+  let pass = document.getElementById("regPass").value;
 
-  if (!studentName || !email || !phone || !course) {
-    document.getElementById("auth-msg").textContent =
-      "Please fill all fields.";
+  if (!name || !email || !pass) {
+    alert("Fill all fields");
     return;
   }
 
-  const { error } = await supabaseClient
-    .from("students")
-    .insert([
-      {
-        student_name: studentName,
-        email: email,
-        phone: phone,
-        course: course
-      }
-    ]);
+  let user = { name, email, pass };
 
-  if (error) {
-    document.getElementById("auth-msg").textContent = 
-      "Error: " + error.message;
-  } else {
-    document.getElementById("auth-msg").textContent =
-      "Registration Successful!";
+  localStorage.setItem(email, JSON.stringify(user));
 
-    document.getElementById("name").value = "";
-    document.getElementById("email").value = "";
-    document.getElementById("phone").value = "";
-    document.getElementById("course").value = "";
+  alert("Registration successful!");
+  showLogin();
+}
+
+// LOGIN
+function login() {
+  let email = document.getElementById("loginEmail").value;
+  let pass = document.getElementById("loginPass").value;
+
+  let userData = localStorage.getItem(email);
+
+  if (!userData) {
+    alert("User not found!");
+    return;
   }
+
+  let user = JSON.parse(userData);
+
+  if (user.pass === pass) {
+    alert("Login successful!");
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("dashboard").classList.remove("hidden");
+    document.getElementById("userInfo").innerText =
+      "Welcome " + user.name + " (" + user.email + ")";
+  } else {
+    alert("Wrong password!");
+  }
+}
+
+// LOGOUT
+function logout() {
+  document.getElementById("dashboard").classList.add("hidden");
+  document.getElementById("loginBox").classList.remove("hidden");
 }
