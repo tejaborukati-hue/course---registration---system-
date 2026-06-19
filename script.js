@@ -1,127 +1,219 @@
- // Sample courses
-const courses = [
-  {id: 1, name: "Web Development", instructor: "Prof. Smith"},
-  {id: 2, name: "Python Programming", instructor: "Prof. Lee"},
-  {id: 3, name: "Data Structures", instructor: "Prof. Kumar"},
-  {id: 4, name: "Machine Learning", instructor: "Prof. Patel"}
-];
+const API_URL = "http://127.0.0.1:5000";
 
-// DOM elements
-const registerForm = document.getElementById('registerForm');
-const loginForm = document.getElementById('loginForm');
-const dashboard = document.getElementById('dashboard');
+// DOM Elements
+const registerForm = document.getElementById("registerForm");
+const loginForm = document.getElementById("loginForm");
+const dashboard = document.getElementById("dashboard");
 
-// Toggle forms
-document.getElementById('showLogin').onclick = () => {
-  registerForm.classList.add('hidden');
-  loginForm.classList.remove('hidden');
+// Toggle Forms
+document.getElementById("showLogin").onclick = () => {
+    registerForm.classList.add("hidden");
+    loginForm.classList.remove("hidden");
 };
 
-document.getElementById('showRegister').onclick = () => {
-  loginForm.classList.add('hidden');
-  registerForm.classList.remove('hidden');
+document.getElementById("showRegister").onclick = () => {
+    loginForm.classList.add("hidden");
+    registerForm.classList.remove("hidden");
 };
 
-// Register
-document.getElementById('registerBtn').onclick = () => {
-  const name = document.getElementById('regName').value;
-  const email = document.getElementById('regEmail').value;
-  const password = document.getElementById('regPassword').value;
+// ---------------- REGISTER ----------------
+document.getElementById("registerBtn").onclick = async () => {
 
-  if (!name || !email || !password) return alert('Fill all fields');
+    const name = document.getElementById("regName").value;
+    const email = document.getElementById("regEmail").value;
+    const password = document.getElementById("regPassword").value;
 
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  
-  if (users.find(u => u.email === email)) {
-    return alert('Email already registered');
-  }
+    if (!name || !email || !password) {
+        alert("Please fill all fields");
+        return;
+    }
 
-  users.push({name, email, password, courses: []});
-  localStorage.setItem('users', JSON.stringify(users));
-  alert('Registration successful! Please login');
-  
-  registerForm.classList.add('hidden');
-  loginForm.classList.remove('hidden');
+    const response = await fetch(`${API_URL}/api/register`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name,
+            email,
+            password
+        })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        alert(data.message);
+
+        registerForm.classList.add("hidden");
+        loginForm.classList.remove("hidden");
+
+    } else {
+        alert(data.error);
+    }
 };
 
-// Login
-document.getElementById('loginBtn').onclick = () => {
-  const email = document.getElementById('loginEmail').value;
-  const password = document.getElementById('loginPassword').value;
+// ---------------- LOGIN ----------------
+document.getElementById("loginBtn").onclick = async () => {
 
-  let users = JSON.parse(localStorage.getItem('users')) || [];
-  const user = users.find(u => u.email === email && u.password === password);
+    const email = document.getElementById("loginEmail").value;
+    const password = document.getElementById("loginPassword").value;
 
-  if (!user) return alert('Invalid credentials');
+    const response = await fetch(`${API_URL}/api/login`, {
 
-  localStorage.setItem('currentUser', JSON.stringify(user));
-  showDashboard(user);
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+            email,
+            password
+        })
+
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+
+        localStorage.setItem("student_id", data.id);
+
+        loginForm.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+
+        document.getElementById("userName").textContent = email;
+        document.getElementById("userEmail").textContent = email;
+
+        loadCourses();
+        loadMyCourses();
+
+    } else {
+
+        alert(data.error);
+
+    }
+
 };
 
-// Show dashboard
-function showDashboard(user) {
-  loginForm.classList.add('hidden');
-  registerForm.classList.add('hidden');
-  dashboard.classList.remove('hidden');
-  
-  document.getElementById('userName').textContent = user.name;
-  document.getElementById('userEmail').textContent = `(${user.email})`;
-  
-  loadCourses();
+// ---------------- LOAD COURSES ----------------
+async function loadCourses() {
+
+    const response = await fetch(`${API_URL}/api/courses`);
+
+    const courses = await response.json();
+
+    document.getElementById("courseList").innerHTML = courses.map(course => `
+
+        <div class="course-item">
+
+            <b>${course.code}</b><br>
+
+            ${course.title}<br>
+
+            Instructor : ${course.instructor}<br>
+
+            Seats Left : ${course.seats_left}<br><br>
+
+            <button onclick="registerCourse(${course.id})">
+
+            Register
+
+            </button>
+
+        </div>
+
+        <hr>
+
+    `).join("");
+
 }
 
-// Load courses
-function loadCourses() {
-  const currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  const courseList = document.getElementById('courseList');
-  const enrolledDiv = document.getElementById('enrolledCourses');
+// ---------------- REGISTER COURSE ----------------
+async function registerCourse(courseId) {
 
-  courseList.innerHTML = courses.map(course => `
-    <div class="course-item">
-      <span><strong>${course.name}</strong> - ${course.instructor}</span>
-      <button onclick="enrollCourse(${course.id})">Register</button>
-    </div>
-  `).join('');
+    const student_id = localStorage.getItem("student_id");
 
-  if (currentUser.courses && currentUser.courses.length > 0) {
-    enrolledDiv.innerHTML = currentUser.courses.map(c => `<div>${c.name}</div>`).join('');
-  } else {
-    enrolledDiv.innerHTML = 'None yet';
-  }
+    const response = await fetch(`${API_URL}/api/register-course`, {
+
+        method: "POST",
+
+        headers: {
+            "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+            student_id,
+            course_id: courseId
+
+        })
+
+    });
+
+    const data = await response.json();
+
+    alert(data.message || data.error);
+
+    loadMyCourses();
+    loadCourses();
+
 }
 
-// Enroll in course
-function enrollCourse(courseId) {
-  let currentUser = JSON.parse(localStorage.getItem('currentUser'));
-  let users = JSON.parse(localStorage.getItem('users'));
+// ---------------- MY COURSES ----------------
+async function loadMyCourses() {
 
-  const course = courses.find(c => c.id === courseId);
-  if (!currentUser.courses) currentUser.courses = [];
+    const student_id = localStorage.getItem("student_id");
 
-  if (currentUser.courses.find(c => c.id === courseId)) {
-    return alert('Already registered for this course');
-  }
+    const response = await fetch(`${API_URL}/api/my-courses/${student_id}`);
 
-  currentUser.courses.push(course);
-  const userIndex = users.findIndex(u => u.email === currentUser.email);
-  users[userIndex].courses = currentUser.courses;
+    const courses = await response.json();
 
-  localStorage.setItem('currentUser', JSON.stringify(currentUser));
-  localStorage.setItem('users', JSON.stringify(users));
+    if (courses.length === 0) {
 
-  loadCourses();
-  alert(`Registered for ${course.name}`);
+        document.getElementById("enrolledCourses").innerHTML = "None yet";
+
+        return;
+
+    }
+
+    document.getElementById("enrolledCourses").innerHTML = courses.map(course => `
+
+        <div>
+
+        ${course.code} - ${course.title}
+
+        </div>
+
+    `).join("");
+
 }
 
-// Logout
-document.getElementById('logoutBtn').onclick = () => {
-  localStorage.removeItem('currentUser');
-  dashboard.classList.add('hidden');
-  loginForm.classList.remove('hidden');
+// ---------------- LOGOUT ----------------
+document.getElementById("logoutBtn").onclick = () => {
+
+    localStorage.removeItem("student_id");
+
+    dashboard.classList.add("hidden");
+
+    loginForm.classList.remove("hidden");
+
 };
 
-// Check if already logged in
+// ---------------- AUTO LOGIN ----------------
 window.onload = () => {
-  const currentUser = localStorage.getItem('currentUser');
-  if (currentUser) showDashboard(JSON.parse(currentUser));
+
+    const student = localStorage.getItem("student_id");
+
+    if (student) {
+
+        loginForm.classList.add("hidden");
+        dashboard.classList.remove("hidden");
+
+        loadCourses();
+        loadMyCourses();
+
+    }
+
 };
