@@ -52,9 +52,8 @@ def init_db():
     """)
 
     cursor.execute("SELECT COUNT(*) FROM courses")
-    count = cursor.fetchone()[0]
 
-    if count == 0:
+    if cursor.fetchone()[0] == 0:
         courses = [
             ("AI101", "Introduction to Artificial Intelligence", "Dr. Kumar", 30),
             ("ML102", "Machine Learning", "Dr. Priya", 25),
@@ -82,9 +81,7 @@ HTML = """
 <html lang="en">
 
 <head>
-
 <meta charset="UTF-8">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Student Course Registration System</title>
@@ -92,87 +89,61 @@ HTML = """
 <style>
 
 * {
-    margin: 0;
-    padding: 0;
     box-sizing: border-box;
 }
 
 body {
-    font-family: Arial, sans-serif;
-
-    background:
-    linear-gradient(
-        135deg,
-        #667eea 0%,
-        #764ba2 100%
-    );
-
-    min-height: 100vh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
+    margin: 0;
     padding: 20px;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    min-height: 100vh;
 }
 
 .container {
-    width: 100%;
-    max-width: 550px;
+    max-width: 600px;
+    margin: auto;
 }
 
 .card {
     background: white;
-    padding: 30px;
+    padding: 25px;
     border-radius: 15px;
-
-    box-shadow:
-    0 10px 40px rgba(0,0,0,0.25);
+    margin-top: 30px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
 }
 
 .hidden {
     display: none;
 }
 
-h2 {
+h1, h2 {
     text-align: center;
     color: #333;
-    margin-bottom: 20px;
 }
 
 h3 {
     color: #333;
-    margin-top: 20px;
-    margin-bottom: 12px;
+    margin-top: 25px;
 }
 
 input {
     width: 100%;
     padding: 13px;
     margin: 8px 0;
-
-    border: 1px solid #ddd;
+    border: 1px solid #ccc;
     border-radius: 7px;
-
     font-size: 16px;
-    outline: none;
-}
-
-input:focus {
-    border-color: #667eea;
 }
 
 button {
     width: 100%;
     padding: 13px;
     margin-top: 10px;
-
-    background: #667eea;
-    color: white;
-
     border: none;
     border-radius: 7px;
-
+    background: #667eea;
+    color: white;
     font-size: 16px;
     cursor: pointer;
 }
@@ -183,69 +154,45 @@ button:hover {
 
 a {
     color: #667eea;
-    text-decoration: none;
     font-weight: bold;
+    text-decoration: none;
 }
 
 p {
-    margin-top: 15px;
     text-align: center;
 }
 
-#userEmail {
-    color: #667eea;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.course-item {
+.course {
+    background: #f4f4f4;
     padding: 15px;
     margin: 10px 0;
-
-    background: #f5f5f5;
     border-radius: 8px;
-
-    border-left: 4px solid #667eea;
+    border-left: 5px solid #667eea;
 }
 
-.course-item b {
-    font-size: 17px;
-    color: #333;
-}
-
-.course-item button {
+.course button {
     width: auto;
     padding: 8px 15px;
-    margin-top: 10px;
-    font-size: 14px;
 }
 
-.enrolled-item {
-    padding: 10px;
-    margin: 6px 0;
-
+.enrolled {
     background: #e8f5e9;
+    padding: 12px;
+    margin: 8px 0;
     border-radius: 7px;
 }
 
 .logout {
     background: #e53935;
-    margin-top: 20px;
-}
-
-.logout:hover {
-    background: #c62828;
 }
 
 </style>
 
 </head>
 
-
 <body>
 
 <div class="container">
-
 
 <!-- REGISTER -->
 
@@ -254,19 +201,19 @@ p {
 <h2>Student Registration</h2>
 
 <input
-type="text"
-id="regName"
-placeholder="Full Name">
+    type="text"
+    id="regName"
+    placeholder="Full Name">
 
 <input
-type="email"
-id="regEmail"
-placeholder="Email">
+    type="email"
+    id="regEmail"
+    placeholder="Email">
 
 <input
-type="password"
-id="regPassword"
-placeholder="Password">
+    type="password"
+    id="regPassword"
+    placeholder="Password">
 
 <button onclick="registerStudent()">
 Register
@@ -274,9 +221,7 @@ Register
 
 <p>
 Already have an account?
-<a href="#" onclick="showLogin()">
-Login
-</a>
+<a href="#" onclick="showLogin()">Login</a>
 </p>
 
 </div>
@@ -289,6 +234,37 @@ Login
 <h2>Student Login</h2>
 
 <input
-type="email"
-id="loginEmail"
-placeholder="Email">
+    type="email"
+    id="loginEmail"
+    placeholder="Email">
+
+<input
+    type="password"
+    id="loginPassword"
+    placeholder="Password">
+
+<button onclick="loginStudent()">
+Login
+</button>
+
+<p>
+Don't have an account?
+<a href="#" onclick="showRegister()">Register</a>
+</p>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboard" class="card hidden">
+
+<h2>
+Welcome <span id="userName"></span> 🎉
+</h2>
+
+<p id="userEmail"></p>
+
+<h3>Available Courses</h3>
+
+<div id="
